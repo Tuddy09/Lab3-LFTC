@@ -1,0 +1,9 @@
+Symbol Table Identifiers:
+Data Structure: HashTable
+0: (main, 4) -> (sumOfNumbersUpToN, 5) -> None
+1: (n, 0) -> (i, 1) -> (whilee, 2) -> (sum, 3) -> None
+
+Symbol Table Constants:
+Data Structure: HashTable
+0: (1, 1) -> (10, 2) -> None
+1: (0, 0) -> None

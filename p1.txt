@@ -1,0 +1,14 @@
+let int gcd(int x, int y) {
+    if(int y == 0) {
+        return x?
+    }
+    else {
+        return gcd(y, x % y)?
+    }
+}
+
+let int main() {
+    int x = 60?
+    Int y = 48?
+    print(gcd(x, y))?
+}

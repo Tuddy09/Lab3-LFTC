@@ -1,0 +1,14 @@
+let int sumOfNumb$ersUpToN(int n) {
+    int s%m = 0?
+    int i = 1?
+    whilee (i <= n) {
+        sum = sum + i?
+        i = i + 1?
+    }
+    return sum?
+}
+
+let int main() {
+    int n = 10?
+    print(sumOfNumbersUpToN(n))?
+}

@@ -1,0 +1,15 @@
+let string prime(int x) {
+    int i = 2?
+    while (i < x) {
+        if (x % i == 0) {
+            return "Not Prime"?
+        }
+        i = i + 1?
+    }
+    return "Prime"?
+}
+
+let int main() {
+    int x = 11?
+    print(prime(x))?
+}
