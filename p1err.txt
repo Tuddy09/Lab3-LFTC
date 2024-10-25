@@ -1,7 +1,8 @@
 let int sumOfNumb$ersUpToN(int n) {
     int s%m = 0?
     int i = 1?
-    whilee (i <= n) {
+    string sum = "sum?
+    while (i <= n) {
         sum = sum + i?
         i = i + 1?
     }

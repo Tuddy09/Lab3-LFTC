@@ -4,19 +4,23 @@ from symboltables import SymbolTableIdentifiers, SymbolTableConstants
 
 
 class LexicalAnalyzer:
+    """
+    A class to perform lexical analysis on a given source code.
+    """
+
     def __init__(self):
-        # Initialize symbol tables using the provided implementation
+        """
+        Initializes the LexicalAnalyzer with symbol tables for identifiers and constants,
+        and sets up the reserved words, operators, and separators.
+        """
         self.identifier_st = SymbolTableIdentifiers()
         self.constant_st = SymbolTableConstants()
 
-        # Initialize PIF to store tokens and their positions
         self.pif: List[Tuple[str, int]] = []
 
-        # Counter for symbol table positions
         self.id_counter = 0
         self.const_counter = 0
 
-        # Define language specifications as per Lab1b.pdf
         self.reserved_words = {
             'int', 'string', 'array', 'for', 'if', 'else',
             'while', 'input', 'print', 'let', 'return'
@@ -31,16 +35,20 @@ class LexicalAnalyzer:
             '(', ')', '[', ']', '{', '}', '?', ',', ';'
         }
 
-        # Regular expressions based on Lab1b specifications
         self.identifier_regex = re.compile(r'^[a-zA-Z][a-zA-Z0-9]*$')
-        # Integer constant regex as per specification
         self.integer_regex = re.compile(r'^0$|^[+-]?[1-9][0-9]*$')
-        # String constant regex as per specification
         self.string_regex = re.compile(r'^"[a-zA-Z0-9 ]*"$')
 
     def tokenize(self, line: str) -> List[str]:
-        """Split a line into tokens while preserving string literals"""
-        # Handle string literals first
+        """
+        Tokenizes a given line of code into a list of tokens.
+
+        Args:
+            line (str): A line of source code.
+
+        Returns:
+            List[str]: A list of tokens extracted from the line.
+        """
         string_tokens = []
         string_pattern = r'"[^"]*"'
         strings = re.finditer(string_pattern, line)
@@ -49,31 +57,53 @@ class LexicalAnalyzer:
             string_tokens.append((placeholder, match.group()))
             line = line.replace(match.group(), placeholder)
 
-        # Add spaces around operators and separators
         for symbol in sorted(self.separators, key=len, reverse=True):
             line = line.replace(symbol, f" {symbol} ")
 
-        # Split by whitespace and filter empty tokens
         tokens = [token.strip() for token in line.split() if token.strip()]
 
-        # Restore string literals
         for placeholder, original in string_tokens:
             tokens = [original if t == placeholder else t for t in tokens]
 
         return tokens
 
     def is_identifier(self, token: str) -> bool:
-        """Check if token is a valid identifier per Lab1b specifications"""
+        """
+        Checks if a token is a valid identifier.
+
+        Args:
+            token (str): The token to check.
+
+        Returns:
+            bool: True if the token is a valid identifier, False otherwise.
+        """
         if token.lower() in self.reserved_words:
             return False
         return bool(self.identifier_regex.match(token))
 
     def is_constant(self, token: str) -> bool:
-        """Check if token is a valid constant per Lab1b specifications"""
+        """
+        Checks if a token is a valid constant (integer or string).
+
+        Args:
+            token (str): The token to check.
+
+        Returns:
+            bool: True if the token is a valid constant, False otherwise.
+        """
         return bool(self.integer_regex.match(token) or self.string_regex.match(token))
 
     def analyze(self, code: str) -> Tuple[List[Tuple[str, int]], str]:
-        """Analyze source code and return PIF and result message"""
+        """
+        Analyzes the given source code and generates the Program Internal Form (PIF)
+        and a result message indicating lexical correctness or errors.
+
+        Args:
+            code (str): The source code to analyze.
+
+        Returns:
+            A tuple containing the PIF and a result message.
+        """
         self.pif = []
         line_number = 0
         errors = []
@@ -87,26 +117,19 @@ class LexicalAnalyzer:
             tokens = self.tokenize(line)
 
             for token in tokens:
-                # Check reserved words first (case-insensitive)
                 if token.lower() in self.reserved_words:
                     self.pif.append((token.lower(), -1))
-                # Check operators
                 elif token in self.operators:
                     self.pif.append((token, -1))
-                # Check separators
                 elif token in self.separators:
                     self.pif.append((token, -1))
-                # Check identifiers
                 elif self.is_identifier(token):
-                    # Add to identifier symbol table if not present
                     if self.identifier_st.get_identifier_value(token) is None:
                         self.identifier_st.add_identifier(token, self.id_counter)
                         self.id_counter += 1
                     pos = self.identifier_st.get_identifier_value(token)
                     self.pif.append(("identifier", pos))
-                # Check constants
                 elif self.is_constant(token):
-                    # Add to constant symbol table if not present
                     if self.constant_st.get_constant_value(token) is None:
                         self.constant_st.add_constant(token, self.const_counter)
                         self.const_counter += 1
@@ -121,11 +144,20 @@ class LexicalAnalyzer:
 
 
 def analyze_program(program_text: str):
-    """Helper function to analyze a program and print results"""
+    """
+    Analyzes a given program text and writes the Program Internal Form (PIF)
+    and Symbol Tables to output files.
+
+    Args:
+        program_text (str): The source code of the program to analyze.
+    """
     analyzer = LexicalAnalyzer()
     pif, result = analyzer.analyze(program_text)
 
-    # Write PIF to PIF.out
+    if result != "Lexically correct":
+        print(result)
+        return
+
     with open('PIF.out', 'w') as pif_file:
         print("\nProgram Internal Form (PIF):")
         pif_file.write("Program Internal Form (PIF):\n")
@@ -133,7 +165,6 @@ def analyze_program(program_text: str):
             print(f"({token}, {value})")
             pif_file.write(f"({token}, {value})\n")
 
-    # Write SymbolTables to ST.out
     with open('ST.out', 'w') as st_file:
         st_file.write("Symbol Table Identifiers:\n")
         st_file.write("Data Structure: HashTable\n")
@@ -155,7 +186,6 @@ def analyze_program(program_text: str):
     print(result)
 
 
-# Test function
 def main():
     test_files = ['p1.txt', 'p2.txt', 'p3.txt', 'p1err.txt']
     for file_name in test_files:

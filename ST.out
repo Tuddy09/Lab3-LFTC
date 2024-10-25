@@ -1,7 +1,7 @@
 Symbol Table Identifiers:
 Data Structure: HashTable
-0: (main, 4) -> (sumOfNumbersUpToN, 5) -> None
-1: (n, 0) -> (i, 1) -> (whilee, 2) -> (sum, 3) -> None
+0: (productOfNumbersUpToN, 0) -> (n, 1) -> (prod, 2) -> (main, 4) -> None
+1: (i, 3) -> None
 
 Symbol Table Constants:
 Data Structure: HashTable
